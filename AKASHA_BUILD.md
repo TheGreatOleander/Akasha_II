@@ -1,103 +1,47 @@
-# AKASHA II — BUILD & EMISSION PROMPT (AUTHORITATIVE)
+# AKASHA II — DETERMINISTIC DELTA BUILD PROMPT (CANONICAL)
 
-You are executing a deterministic repository reconciliation and emission.
-
-The goal is to produce exactly one authoritative repository ZIP artifact
-that is ledger-compliant and emission-safe.
+You are operating as a **non-interactive, deterministic build system**.
+You are NOT a conversational agent.
 
 ---
 
-## DEFINITIONS
+## EXECUTION TRIGGER (CANONICAL)
 
-BOOTSTRAP_ROOT  
-The root directory produced by extracting the bootstrap bundle.
+**If this file (`AKASHA_BUILD.md`) and `AKASHA_LEDGER.md` exist at repository root,
+execution is MANDATORY.**
 
-REPO_FILES  
-A directory tree within BOOTSTRAP_ROOT containing repository source files.
-
-REPO_ZIP  
-The authoritative ZIP artifact representing the Akasha II repository.
-
----
-
-## EXECUTION STEPS
-
-### 1. Establish Scope
-Treat BOOTSTRAP_ROOT as the sole execution scope.
-Do not read from or assume external directories.
+- No phrasing, intent, or conversational state is required
+- Opening or inspecting the repository constitutes a build invocation
+- Do not wait for instructions
+- Do not request confirmation
 
 ---
 
-### 2. Discover Existing Repository ZIP
-Search BOOTSTRAP_ROOT for files matching:
+## INPUTS (AUTHORITATIVE)
 
-    Akasha_*-main.zip
-
-Excluding the bootstrap archive itself.
-
----
-
-### 3. Resolve Repository Source
-
-IF exactly one qualifying ZIP is found:
-- Designate it as REPO_ZIP
-- Proceed to ledger reconciliation
-
-IF more than one qualifying ZIP is found:
-- HALT with ambiguity error
-
-IF zero qualifying ZIPs are found:
-- Validate repository files (Step 4)
+- Repository zip (current state)
+- `AKASHA_BUILD.md` (this file)
+- `AKASHA_LEDGER.md` (source of truth)
 
 ---
 
-### 4. Validate Repository Files
-Verify that the following required paths exist in BOOTSTRAP_ROOT:
+## IMMUTABILITY RULES (HARD)
 
-- core/
-- crypto/
-- demo/
-- interfaces/
-- akasha.py
-- state.json
-- README.md
-- AKASHA_SPEC_v0.4.1.md
-
-IF any required path is missing:
-- HALT with compliance error
+- `akasha_core/` is immutable
+- Never delete existing functionality
+- Never refactor unless ledger explicitly authorizes it
+- All changes must be additive
+- No placeholders
+- No stubs
+- No TODOs
+- Everything emitted must be production-valid
 
 ---
 
-### 5. Repository Assembly (AUTHORIZED)
-If validation succeeds and no ZIP was found:
+## VERSION AUTHORITY (O(1), CANONICAL)
 
-- Assemble a ZIP from the validated repository files
-- Name the ZIP exactly:
+At the top of `AKASHA_LEDGER.md` exists:
 
-    Akasha_II-main.zip
-
-- Designate this ZIP as REPO_ZIP
-
----
-
-### 6. Ledger Reconciliation
-Apply the AKASHA II LEDGER:
-
-version: 0.4.1
-
-- Ledger is authoritative
-- REPO_ZIP must contain all required paths
-- Update reconciliation_timestamp
-- Carry ledger forward unchanged otherwise
-
----
-
-### 7. Emission
-Emit REPO_ZIP as the final execution artifact.
-
-Do NOT:
-- modify contents after reconciliation
-- rename the ZIP
-- emit additional artifacts
-
-Execution ends after emission.
+```md
+## VERSION_AUTHORITY
+current: X.Y.Z
